@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+chromadb
+langchain
+langchain-community
+anthropic
+sentence-transformers
+python-dotenv
+pypdf
+unstructured[pdf]

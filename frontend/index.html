@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Chatbot</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <h1>Company Assistant</h1>
+            <p>Ask anything about our company documents</p>
+        </div>
+
+        <!-- Chat messages appear here -->
+        <div class="chat-box" id="chat-box">
+            <div class="message bot">
+                Hello! Ask me anything about the company.
+            </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ask a question..."
+                onkeydown="if(event.key==='Enter') sendMessage()" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
