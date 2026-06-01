@@ -77,14 +77,14 @@ The LLM mode badge at the top shows whether you're running on OpenAI or Ollama, 
 
 ## LLM Modes
 
-### OpenAI (cloud)
+## OpenAI (cloud)
 
 - Needs an API key
 - Faster, better quality answers
 - Costs money per request
 - Uses `gpt-4o-mini` by default (change in `.env`)
 
-### Ollama (local)
+## Ollama (local)
 
 - Free, runs on your machine
 - No data leaves your computer
@@ -95,14 +95,14 @@ The switch is automatic. If `OPENAI_API_KEY` is set, it uses OpenAI. If not, it 
 
 ## How to run whole project
 
-### 1. Clone and set up the folder
+# 1. Clone and set up the folder
 
 ```bash
 git clone
 cd rag-chatbot
 ```
 
-### 2. Create a virtual environment and install dependencies
+# 2. Create a virtual environment and install dependencies
 
 ```bash
 python3 -m venv .venv
@@ -110,7 +110,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure your API key in `.env`
+# 3. Configure your API key in `.env`
 
 Open `.env` and either set your OpenAI key:
 
@@ -128,7 +128,7 @@ ollama pull nomic-embed-text
 ollama serve
 ```
 
-### 4. Add your documents in data file
+# 4. Add your documents in data file
 
 Drop any PDF, TXT, DOCX, or MD files into:
 
@@ -136,7 +136,7 @@ Drop any PDF, TXT, DOCX, or MD files into:
 PATH: rag-chatbot/backend/data/
 ```
 
-### 5. Ingest the documents
+# 5. Ingest the documents
 
 ```bash
 python3 backend/ingest.py
@@ -150,7 +150,7 @@ To wipe and rebuild from scratch:
 python3 backend/ingest.py --reset
 ```
 
-### 6. Start the backend
+# 6. Start the backend
 
 ```bash
 uvicorn backend.main:app --reload --port 8000
@@ -162,7 +162,7 @@ Leave this running. You'll see Uvicorn running on:
 http://0.0.0.0:8000
 ```
 
-### 7. Open the frontend
+# 7. Open the frontend
 
 Just open the file directly in your browser:
 
@@ -188,3 +188,28 @@ The green dot in the top right means the backend is connected and ready.
 - You can upload more files through the UI at any time without restarting the server.
 - Conversation history is kept in the browser tab. Refreshing the page starts a fresh conversation, but the documents stay in the database.
 - The `.env` file is gitignored by default. Never commit your API key.
+
+#  Use the Docker
+#  Run with Docker
+
+# 1. Pull the images
+
+docker pull ketanbagewadi/rag-chatbot-backend:latest
+docker pull ketanbagewadi/rag-chatbot-frontend:latest
+
+# 2. Create a docker-compose.yml file
+
+(copy the docker-compose.yml from this repo)
+
+# 3. Add your API key
+
+Edit a file `backend/.env` and add:
+OPENAI_API_KEY=sk-your-key-here
+
+# 4. Run
+
+docker-compose up
+
+# 5. Open browser
+
+http://localhost:8000
