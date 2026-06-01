@@ -742,14 +742,11 @@
     </div>
 
     <script>
-        // ── Config ─────────────────────────────────────────────────────────────────
-        const API = "http://localhost:8000";
+        const API_URL = "http://localhost:8000";
 
-        // ── State ──────────────────────────────────────────────────────────────────
-        let history = [];          // [{role, content}, ...]
+        let history = [];
         let isStreaming = false;
 
-        // ── DOM refs ───────────────────────────────────────────────────────────────
         const messagesEl = document.getElementById("messages");
         const chatInput = document.getElementById("chat-input");
         const btnSend = document.getElementById("btn-send");
@@ -767,9 +764,6 @@
         const llmBadgeText = document.getElementById("llm-badge-text");
         const btnClear = document.getElementById("btn-clear");
 
-        // ══════════════════════════════════════════════════════════════════════════
-        // HEALTH CHECK
-        // ══════════════════════════════════════════════════════════════════════════
 
         async function checkHealth() {
             try {
@@ -793,9 +787,6 @@
             }
         }
 
-        // ══════════════════════════════════════════════════════════════════════════
-        // DOCUMENT LIST
-        // ══════════════════════════════════════════════════════════════════════════
 
         const FILE_ICONS = { pdf: "📕", txt: "📄", docx: "📘", md: "📝" };
 
@@ -823,9 +814,7 @@
             });
         }
 
-        // ══════════════════════════════════════════════════════════════════════════
-        // FILE UPLOAD
-        // ══════════════════════════════════════════════════════════════════════════
+
 
         async function uploadFile(file) {
             uploadProgress.classList.add("show");
@@ -870,9 +859,7 @@
             for (const file of e.dataTransfer.files) await uploadFile(file);
         });
 
-        // ══════════════════════════════════════════════════════════════════════════
-        // CLEAR DOCUMENTS
-        // ══════════════════════════════════════════════════════════════════════════
+
 
         btnClear.addEventListener("click", async () => {
             if (!confirm("Delete all documents and clear the vector DB?")) return;
@@ -887,9 +874,6 @@
             }
         });
 
-        // ══════════════════════════════════════════════════════════════════════════
-        // CHAT — MESSAGES
-        // ══════════════════════════════════════════════════════════════════════════
 
         function hideWelcome() {
             if (welcomeEl) welcomeEl.remove();
@@ -951,9 +935,7 @@
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
-        // ══════════════════════════════════════════════════════════════════════════
-        // CHAT — SEND + STREAM
-        // ══════════════════════════════════════════════════════════════════════════
+
 
         async function sendMessage() {
             const question = chatInput.value.trim();

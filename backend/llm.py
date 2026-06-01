@@ -13,28 +13,22 @@ import os
 from typing import Generator, List, Dict
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# MODEL CONFIG
-# ══════════════════════════════════════════════════════════════════════════════
+# Model config
 
-# OpenAI
+
 OPENAI_API_KEY    = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL      = os.getenv("OPENAI_MODEL", "gpt-4o-mini")   # cheap + fast default
 
-# Ollama (local)
+
 OLLAMA_BASE_URL   = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL      = os.getenv("OLLAMA_MODEL", "llama3")        # change to mistral, phi3, etc.
 
-# Detect which mode to use
 USE_OPENAI = bool(OPENAI_API_KEY)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# SYSTEM PROMPT
-# ══════════════════════════════════════════════════════════════════════════════
 
-# SYSTEM_PROMPT = """You are a helpful AI assistant that answers questions \
-# based on the provided context from a knowledge base.
+
+# prompt
 
 # Rules:
 # - Answer ONLY from the context provided below.
@@ -56,9 +50,7 @@ Rules:
 - Be concise and clear.
 """
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PROMPT BUILDER
-# ══════════════════════════════════════════════════════════════════════════════
+# Prompt Builder
 
 def build_prompt(context: str, question: str, history: List[Dict] = None) -> List[Dict]:
     """
@@ -74,25 +66,17 @@ def build_prompt(context: str, question: str, history: List[Dict] = None) -> Lis
     """
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    # Inject retrieved context as a system-level knowledge block
     messages.append({
         "role": "system",
         "content": f"--- KNOWLEDGE BASE CONTEXT ---\n{context}\n--- END CONTEXT ---",
     })
 
-    # Add conversation history (last 6 turns max to stay within context window)
     if history:
         messages.extend(history[-6:])
 
-    # Add the current question
     messages.append({"role": "user", "content": question})
 
     return messages
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# OPENAI — STREAMING
-# ══════════════════════════════════════════════════════════════════════════════
 
 def stream_openai(messages: List[Dict]) -> Generator[str, None, None]:
     """
@@ -120,11 +104,6 @@ def stream_openai(messages: List[Dict]) -> Generator[str, None, None]:
         delta = chunk.choices[0].delta
         if delta.content:
             yield delta.content
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# OLLAMA — STREAMING
-# ══════════════════════════════════════════════════════════════════════════════
 
 def stream_ollama(messages: List[Dict]) -> Generator[str, None, None]:
     """
@@ -175,9 +154,7 @@ def stream_ollama(messages: List[Dict]) -> Generator[str, None, None]:
                 continue
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PUBLIC API  (used by main.py)
-# ══════════════════════════════════════════════════════════════════════════════
+# API used in main.py
 
 def stream_response(
     context: str,
@@ -210,9 +187,7 @@ def get_llm_info() -> Dict:
         return {"mode": "ollama", "model": OLLAMA_MODEL, "url": OLLAMA_BASE_URL}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CLI  — test LLM directly:  python llm.py
-# ══════════════════════════════════════════════════════════════════════════════
+# mian
 
 if __name__ == "__main__":
     print("=" * 55)
