@@ -194,8 +194,11 @@ The green dot in the top right means the backend is connected and ready.
 
 # 1. Pull the images
 
+'''bash
 docker pull ketanbagewadi/rag-chatbot-backend:latest
+
 docker pull ketanbagewadi/rag-chatbot-frontend:latest
+'''
 
 # 2. Create a docker-compose.yml file
 
@@ -203,12 +206,16 @@ docker pull ketanbagewadi/rag-chatbot-frontend:latest
 
 # 3. Add your API key
 
+'''bash
 Edit a file `backend/.env` and add:
 OPENAI_API_KEY=sk-your-key-here
+'''
 
 # 4. Run
 
+'''bash
 docker-compose up
+'''
 
 # 5. Open browser
 
