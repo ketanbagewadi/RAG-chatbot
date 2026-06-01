@@ -1,32 +1,16 @@
-"""
-retriever.py — RAG Chatbot Retrieval Engine
-============================================
-Given a user query, embeds it and searches ChromaDB for the
-most semantically similar chunks. Returns them as context for the LLM.
-"""
 
 import os
 from pathlib import Path
 from typing import List, Dict
-
-# ── Vector DB ──────────────────────────────────────────────────────────────────
 import chromadb
 from chromadb.config import Settings
-
-# ── Reuse embedding loader from ingest.py ─────────────────────────────────────
 from ingest import get_embedding_model, CHROMA_DIR, COLLECTION_NAME
 
 
-# ── ChromaDB client (same persistent DB as ingest.py) ─────────────────────────
 chroma_client = chromadb.PersistentClient(
     path=str(CHROMA_DIR),
     settings=Settings(anonymized_telemetry=False),
 )
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# RETRIEVER CLASS
-# ══════════════════════════════════════════════════════════════════════════════
 
 class Retriever:
     """
@@ -42,8 +26,6 @@ class Retriever:
         self.top_k       = top_k
         self.embed_model = get_embedding_model()
         self.collection  = self._load_collection()
-
-    # ── Internal ───────────────────────────────────────────────────────────────
 
     def _load_collection(self):
         """Load the ChromaDB collection. Raises if not yet ingested."""
@@ -61,8 +43,6 @@ class Retriever:
     def _reload_collection(self):
         """Re-attach to collection (called after a new file is uploaded)."""
         self.collection = self._load_collection()
-
-    # ── Public API ─────────────────────────────────────────────────────────────
 
     def retrieve(self, query: str) -> List[Dict]:
         """
@@ -82,24 +62,21 @@ class Retriever:
         if not query.strip():
             return []
 
-        # 1. Embed the query
         query_embedding = self.embed_model.embed_query(query)
 
-        # 2. Search ChromaDB
         results = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=min(self.top_k, self.collection.count()),
             include=["documents", "metadatas", "distances"],
         )
 
-        # 3. Parse and return results
-        chunks      = results["documents"][0]   # list of strings
-        metadatas   = results["metadatas"][0]   # list of dicts
-        distances   = results["distances"][0]   # cosine distances (lower = closer)
+        chunks      = results["documents"][0]   
+        metadatas   = results["metadatas"][0]   
+        distances   = results["distances"][0]   
 
         retrieved = []
         for text, meta, dist in zip(chunks, metadatas, distances):
-            score = round(1 - dist, 4)          # convert distance → similarity
+            score = round(1 - dist, 4)          
             retrieved.append({
                 "text":   text,
                 "source": meta.get("source", "unknown"),
@@ -143,15 +120,6 @@ class Retriever:
             "top_k": self.top_k,
         }
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# MODULE-LEVEL SINGLETON  (imported by main.py)
-# ══════════════════════════════════════════════════════════════════════════════
-
-# Instantiated once when main.py imports this module.
-# main.py does:  from retriever import retriever
-retriever: Retriever = None   # populated by get_retriever()
-
 def get_retriever(top_k: int = 4) -> Retriever:
     """
     Returns a module-level Retriever singleton.
@@ -161,11 +129,6 @@ def get_retriever(top_k: int = 4) -> Retriever:
     if retriever is None:
         retriever = Retriever(top_k=top_k)
     return retriever
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CLI  — test retrieval:  python retriever.py
-# ══════════════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     import sys

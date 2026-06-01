@@ -49,9 +49,6 @@ chroma_client = chromadb.PersistentClient(
 COLLECTION_NAME = "rag_documents"
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# EMBEDDING MODEL — auto-select
-# ══════════════════════════════════════════════════════════════════════════════
 
 def get_embedding_model():
     """
@@ -76,9 +73,7 @@ def get_embedding_model():
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# DOCUMENT LOADING
-# ══════════════════════════════════════════════════════════════════════════════
+# Load Documents
 
 LOADER_MAP = {
     ".pdf":  PyPDFLoader,
@@ -125,9 +120,7 @@ def load_all_documents(directory: Path = DATA_DIR) -> List[Document]:
     return all_docs
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CHUNKING
-# ══════════════════════════════════════════════════════════════════════════════
+# chunking
 
 def split_documents(docs: List[Document]) -> List[Document]:
     """
@@ -145,9 +138,7 @@ def split_documents(docs: List[Document]) -> List[Document]:
     return chunks
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# EMBEDDING + STORING IN CHROMADB
-# ══════════════════════════════════════════════════════════════════════════════
+# embedding + store in chromaDB
 
 def chunk_id(chunk: Document, index: int) -> str:
     """Generate a stable, unique ID for each chunk."""
@@ -161,7 +152,6 @@ def store_chunks(chunks: List[Document], embed_model, reset: bool = False) -> No
     Embed chunks and upsert them into ChromaDB.
     Set reset=True to wipe and rebuild the collection from scratch.
     """
-    # Get or create collection
     if reset:
         try:
             chroma_client.delete_collection(COLLECTION_NAME)
@@ -174,7 +164,6 @@ def store_chunks(chunks: List[Document], embed_model, reset: bool = False) -> No
         metadata={"hnsw:space": "cosine"},   # cosine similarity
     )
 
-    # Build lists for ChromaDB bulk upsert
     ids        : List[str]        = []
     documents  : List[str]        = []
     metadatas  : List[Dict]       = []
@@ -208,10 +197,6 @@ def store_chunks(chunks: List[Document], embed_model, reset: bool = False) -> No
     )
     print(f"[Chroma] Stored {len(ids)} chunk(s) in collection '{COLLECTION_NAME}'.")
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# PUBLIC API  (used by main.py for /upload endpoint)
-# ══════════════════════════════════════════════════════════════════════════════
 
 def ingest_file(file_path: Path) -> Dict:
     """
@@ -252,9 +237,7 @@ def ingest_all(reset: bool = True) -> Dict:
     }
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CLI  — run directly:  python ingest.py
-# ══════════════════════════════════════════════════════════════════════════════
+# main
 
 if __name__ == "__main__":
     print("=" * 55)
