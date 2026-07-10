@@ -120,6 +120,8 @@ class Retriever:
             "top_k": self.top_k,
         }
 
+retriever = None 
+
 def get_retriever(top_k: int = 4) -> Retriever:
     """
     Returns a module-level Retriever singleton.
