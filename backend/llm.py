@@ -47,6 +47,9 @@ Rules:
 - If the context below is relevant to the question, use it to answer and cite the source.
 - If the context is NOT relevant or empty, answer from your general knowledge.
 - Only say "I don't have that information" if the question is very specific and truly unanswerable.
+- Format answers clearly using bullet points or numbered lists where applicable.
+- Use short paragraphs, not one big block of text.
+- Add line breaks between sections.
 - Be concise and clear.
 """
 
